@@ -1,73 +1,66 @@
-# React + TypeScript + Vite
+# FLUJO — Control de gastos personales
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación web **progresiva (PWA)** para llevar tus ingresos, gastos y metas de ahorro con una regla de presupuesto tipo **50 / 30 / 20** (necesidades, deseos y ahorro), adaptable a tus porcentajes.
 
-Currently, two official plugins are available:
+## Qué hace la app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Onboarding**: creación del perfil (nombre, ingreso neto y reparto del presupuesto).
+- **Dashboard**: resumen del mes, flujo del día y comparativas con la regla elegida.
+- **Gastos**: alta, edición y borrado de movimientos por categoría, filtros y registro rápido con actualización optimista en la interfaz.
+- **Presupuesto**: vista alineada con necesidades / deseos / ahorro.
+- **Ahorro**: metas con abonos y seguimiento del progreso.
+- **Perfil**: datos del perfil, historial de nómina (ingresos por mes) y **exportación CSV** de gastos.
+- **Tour de bienvenida** la primera vez que entras al panel (se guarda en el navegador).
 
-## React Compiler
+Los datos se guardan **en el dispositivo** (`localStorage`) mediante un repositorio local. El cliente **Supabase** está preparado en el código para cuando quieras enlazar backend en la nube; hoy el arranque de la app usa solo almacenamiento local.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Stack técnico
 
-## Expanding the ESLint configuration
+- React 19, TypeScript, Vite 7  
+- React Router, TanStack Query, Zustand, React Hook Form, Zod  
+- Tailwind CSS 4, Recharts  
+- Vitest y pruebas de casos de uso  
+- `vite-plugin-pwa` (service worker y manifest)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Arquitectura por capas: **dominio → casos de uso → infraestructura (repositorio) → presentación**.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Requisitos
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js **20+** (recomendado LTS)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Puesta en marcha
+
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Abre la URL que muestra Vite (por defecto `http://localhost:5173`).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| Comando | Descripción |
+|--------|-------------|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Compilación de producción |
+| `npm run preview` | Vista previa del build |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest |
+| `npm run test:supabase` | Comprueba URL y clave pública contra tu proyecto (lee `.env.local`) |
+
+## Variables de entorno (Supabase, opcional)
+
+Copia `.env.example` a `.env.local` y rellena:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY` (o `VITE_SUPABASE_ANON_KEY` con la JWT anon)
+
+**No** uses la clave *secret* / *service_role* en el frontend. En Vercel, Netlify u otro hosting, define las mismas variables `VITE_*` en el panel del proyecto (`.env.local` no se sube al repositorio).
+
+## Despliegue
+
+Build estático: `npm run build` genera la carpeta `dist`. Configura las variables `VITE_*` en tu plataforma y, si usas autenticación con redirecciones, añade la URL de producción en Supabase → Authentication → URL configuration.
+
+## Licencia
+
+Uso del repositorio según lo definas como autor del proyecto.
