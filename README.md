@@ -1,66 +1,26 @@
-# FLUJO — Control de gastos personales
+# FLUJO
 
-Aplicación web **progresiva (PWA)** para llevar tus ingresos, gastos y metas de ahorro con una regla de presupuesto tipo **50 / 30 / 20** (necesidades, deseos y ahorro), adaptable a tus porcentajes.
+PWA para llevar el día a día del dinero: ingresos, gastos por categoría y metas de ahorro, con una regla tipo **50 / 30 / 20** (necesidades, deseos, ahorro) que se puede ajustar a gusto.
 
-## Qué hace la app
+## Qué incluye
 
-- **Onboarding**: creación del perfil (nombre, ingreso neto y reparto del presupuesto).
-- **Dashboard**: resumen del mes, flujo del día y comparativas con la regla elegida.
-- **Gastos**: alta, edición y borrado de movimientos por categoría, filtros y registro rápido con actualización optimista en la interfaz.
-- **Presupuesto**: vista alineada con necesidades / deseos / ahorro.
-- **Ahorro**: metas con abonos y seguimiento del progreso.
-- **Perfil**: datos del perfil, historial de nómina (ingresos por mes) y **exportación CSV** de gastos.
-- **Tour de bienvenida** la primera vez que entras al panel (se guarda en el navegador).
+Monté un onboarding para el perfil y el reparto del presupuesto, un dashboard con el mes en curso y comparativas, pantalla de gastos con filtros y altas rápidas (la UI actualiza al tiro y después confirma contra el repo local), vista de presupuesto alineada a esos tres bloques, metas de ahorro con abonos, y perfil con historial de nómina y descarga de gastos en CSV. La primera vez que entras al panel aparece un tour corto; después no molesta más.
 
-Los datos se guardan **en el dispositivo** (`localStorage`) mediante un repositorio local. El cliente **Supabase** está preparado en el código para cuando quieras enlazar backend en la nube; hoy el arranque de la app usa solo almacenamiento local.
+Hoy los datos viven en el navegador (`localStorage`). Dejé armado el cliente de Supabase en el proyecto por si más adelante quiero sincronizar o sumar auth; el flujo que corre ahora no depende de eso.
 
-## Stack técnico
+## Tecnología
 
-- React 19, TypeScript, Vite 7  
-- React Router, TanStack Query, Zustand, React Hook Form, Zod  
-- Tailwind CSS 4, Recharts  
-- Vitest y pruebas de casos de uso  
-- `vite-plugin-pwa` (service worker y manifest)
+React 19, TypeScript, Vite, Tailwind, React Router, TanStack Query, Zustand, React Hook Form y Zod. Gráficos con Recharts. Tests con Vitest sobre los casos de uso. PWA con `vite-plugin-pwa`. La estructura la fui ordenando en capas: dominio, aplicación, infraestructura (repositorio) y presentación.
 
-Arquitectura por capas: **dominio → casos de uso → infraestructura (repositorio) → presentación**.
+## Local
 
-## Requisitos
-
-- Node.js **20+** (recomendado LTS)
-
-## Puesta en marcha
+Necesitas Node 20 en adelante. Después es lo de siempre:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abre la URL que muestra Vite (por defecto `http://localhost:5173`).
+`npm run build` deja el estático en `dist/`. `npm run test` corre la suite. `npm run test:supabase` es un script mío que levanta el `.env.local` y prueba URL + clave pública contra el proyecto; sirve para no estar adivinando si pegué mal la key del panel (la pública, nunca la service_role).
 
-## Scripts
-
-| Comando | Descripción |
-|--------|-------------|
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Compilación de producción |
-| `npm run preview` | Vista previa del build |
-| `npm run lint` | ESLint |
-| `npm run test` | Vitest |
-| `npm run test:supabase` | Comprueba URL y clave pública contra tu proyecto (lee `.env.local`) |
-
-## Variables de entorno (Supabase, opcional)
-
-Copia `.env.example` a `.env.local` y rellena:
-
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY` (o `VITE_SUPABASE_ANON_KEY` con la JWT anon)
-
-**No** uses la clave *secret* / *service_role* en el frontend. En Vercel, Netlify u otro hosting, define las mismas variables `VITE_*` en el panel del proyecto (`.env.local` no se sube al repositorio).
-
-## Despliegue
-
-Build estático: `npm run build` genera la carpeta `dist`. Configura las variables `VITE_*` en tu plataforma y, si usas autenticación con redirecciones, añade la URL de producción en Supabase → Authentication → URL configuration.
-
-## Licencia
-
-Uso del repositorio según lo definas como autor del proyecto.
+Si lo subo a Vercel, Netlify o similar, las variables `VITE_SUPABASE_*` las cargo ahí: el `.env.local` no va al git por el `.gitignore`.
